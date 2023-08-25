@@ -1,0 +1,24 @@
+{
+  "name": "universal-api",
+  "type": "module",
+  "version": "1.0.0",
+  "description": "API untuk waktu solat & gps tracker sistem",
+  "main": "index.js",
+  "scripts": {
+    "dev": "nodemon index.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Mohamed Ariff",
+  "license": "ISC",
+  "dependencies": {
+    "compression": "^1.7.4",
+    "cors": "^2.8.5",
+    "dayjs": "^1.11.9",
+    "dotenv": "^16.1.4",
+    "express": "^4.18.2",
+    "helmet": "^7.0.0",
+    "jsonwebtoken": "^9.0.1",
+    "mongodb": "^5.7.0",
+    "redis": "^4.6.7"
+  }
+}

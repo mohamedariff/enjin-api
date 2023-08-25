@@ -1,0 +1,166 @@
+import dayjs from "dayjs";
+
+import { mongoDB } from "../../db/mongodb.js";
+import chunkArray from "../../utils/chunkArray.js";
+// import { DATE_FORMAT_REVERSE } from "../../utils/constant.js";
+
+export const recomputeController = async (req, res) => {
+  const { date, imei } = req.body;
+
+  if (!date || !imei)
+    return res.status(400).json({
+      status: "Error",
+      message: `Missing required fields: ${!date ? "date" : "imei"} `,
+    });
+
+  console.log("------/api/recompute------");
+
+  const agg = [
+    {
+      $match: {
+        timestamp: {
+          $gte: dayjs(date).startOf("day").toDate(),
+          $lte: dayjs(date).endOf("day").toDate(),
+        },
+      },
+    },
+    // {
+    //   $limit: 1000,
+    // },
+    {
+      $sort: {
+        timestamp: 1,
+      },
+    },
+    {
+      $project: {
+        _id: 1,
+        timestamp: 1,
+        ignition: 1,
+        lat: "$metadata.GPSelement.Latitude",
+        lon: "$metadata.GPSelement.Longitude",
+        speed: "$metadata.GPSelement.Speed",
+        angle: "$metadata.GPSelement.Angle",
+        fuel: "$metadata.IOelement.Elements.390",
+        obdOdometer: "$metadata.IOelement.Elements.389",
+        odometer: "$metadata.IOelement.Elements.16",
+        greenDrivingType: "$metadata.IOelement.Elements.253",
+      },
+    },
+    // {
+    //   $out: dayjs(date).format(DATE_FORMAT_REVERSE),
+    // },
+  ];
+
+  try {
+    const collection = mongoDB.db("imei").collection(imei);
+    const dayCollections = await collection.aggregate(agg).toArray();
+
+    if (!dayCollections.length) return res.status(404).send([]);
+
+    let dailyTripsTimestamps = [];
+    let remove1stTrip = false;
+    let toggle = false;
+
+    // find on off igninition state
+    dayCollections.map((raw, index) => {
+      if (!toggle && raw.ignition == 1) {
+        if (index <= 1 && dayCollections[0].ignition) {
+          return (remove1stTrip = true);
+        }
+        toggle = true;
+        dailyTripsTimestamps = [
+          ...dailyTripsTimestamps,
+          dayCollections[index].timestamp,
+        ];
+      }
+      if (toggle && raw.ignition == 0) {
+        toggle = false;
+        dailyTripsTimestamps = [
+          ...dailyTripsTimestamps,
+          dayCollections[index - 1].timestamp,
+        ];
+      }
+    });
+
+    console.log("=dailyTripsTimestamps=", dailyTripsTimestamps.length);
+
+    // Make array of start and end trips timestamp
+    const start_stop_timestamp = chunkArray(dailyTripsTimestamps, 2);
+
+    // Remove continue from yesterdays's trip.
+    // ex: travel from 11.30pm to 1am. this logic will remove the 12.00am to 1am trip in the next day
+    if (remove1stTrip) start_stop_timestamp.shift();
+
+    if (!start_stop_timestamp) return res.status(404).send("No Trips");
+
+    // Filter trips that have the same start and end timestamp
+    const filtered_start_stop_timestamps = start_stop_timestamp?.filter(
+      (data) => data[0] !== data[1]
+    );
+
+    start_stop_timestamp.length !== filtered_start_stop_timestamps.length &&
+      console.error("1 or more trips missing");
+
+    // Filter that may missing start or end timestamp
+    const filter_no_start_or_end_timestamp =
+      filtered_start_stop_timestamps.filter((data) => data.length === 2);
+
+    console.time("compute trips");
+
+    const trips = filter_no_start_or_end_timestamp.map((data, index) => {
+      // Filter from queried ranging date
+      const trip = dayCollections.filter(
+        (raw) => raw.timestamp >= data[0] && raw.timestamp <= data[1]
+      );
+
+      // Append speed used for find max speed
+      const speed = trip.map((raw) => raw.speed);
+
+      // Find violations count
+      let violationsCount = 0;
+      trip.map((raw) => raw.greenDrivingType && violationsCount++);
+
+      // Iterate trips to append for graph/d3 info
+      const coordinates = trip.map((raw) => {
+        return {
+          speed: Number(raw.speed),
+          lat: Number(raw.lat),
+          lon: Number(raw.lon),
+          ts: raw.timestamp,
+          odo: Number(raw.odometer) / 1000,
+          angle: Number(raw.angle),
+          // greenDrivingType: Number(raw.greenDrivingType) || null,
+        };
+      });
+
+      // build/compute trips
+      const summary = {
+        index,
+        startTime: trip[0].timestamp,
+        endTime: trip[trip.length - 1].timestamp,
+        duration: dayjs(trip[trip.length - 1].timestamp).diff(
+          trip[0].timestamp,
+          "minutes"
+        ),
+        distance: (trip[trip.length - 1].odometer - trip[0].odometer) / 1000,
+        topSpeed: Number(Math.max(...speed)),
+        coordinates,
+      };
+      return summary;
+    });
+
+    console.timeEnd("compute trips");
+
+    const summarized_trips = { date: date, trips };
+
+    const trips_collection = mongoDB.db("trips").collection(imei);
+    await trips_collection.deleteMany({ date });
+    await trips_collection.insertOne(summarized_trips);
+
+    res.status(200).send(summarized_trips);
+  } catch (err) {
+    console.error(" ERROR @ /api/recompute ::", err.stack);
+    return res.sendStatus(404);
+  }
+};
