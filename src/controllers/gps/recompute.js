@@ -56,7 +56,7 @@ export const recomputeController = async (req, res) => {
     const collection = mongoDB.db("imei").collection(imei);
     const dayCollections = await collection.aggregate(agg).toArray();
 
-    if (!dayCollections.length) return res.status(404).send([]);
+    if (!dayCollections.length) return res.status(200).send([]);
 
     let dailyTripsTimestamps = [];
     let remove1stTrip = false;
