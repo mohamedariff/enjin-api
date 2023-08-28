@@ -92,7 +92,7 @@ export const recomputeController = async (req, res) => {
     // ex: travel from 11.30pm to 1am. this logic will remove the 12.00am to 1am trip in the next day
     if (remove1stTrip) start_stop_timestamp.shift();
 
-    if (!start_stop_timestamp) return res.status(404).send("No Trips");
+    if (!start_stop_timestamp) return res.status(200).send("No Trips");
 
     // Filter trips that have the same start and end timestamp
     const filtered_start_stop_timestamps = start_stop_timestamp?.filter(
@@ -120,6 +120,8 @@ export const recomputeController = async (req, res) => {
       // Find violations count
       let violationsCount = 0;
       trip.map((raw) => raw.greenDrivingType && violationsCount++);
+
+      console.log("=======violationsCount:", violationsCount);
 
       // Iterate trips to append for graph/d3 info
       const coordinates = trip.map((raw) => {
