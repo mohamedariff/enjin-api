@@ -2,11 +2,11 @@ import express from "express";
 const router = express.Router();
 
 import {
-  insertUserController,
   getUserController,
+  updateUserController,
 } from "../../controllers/gps/user.js";
 
-router.post("/get", getUserController);
-router.post("/insert", insertUserController);
+router.post("/", getUserController);
+router.post("/update", updateUserController);
 
 export default router;

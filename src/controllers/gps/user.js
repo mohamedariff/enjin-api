@@ -1,6 +1,6 @@
 import { mongoDB } from "../../db/mongodb.js";
 
-export const insertUserController = async (req, res) => {
+export const updateUserController = async (req, res) => {
   const { email, data } = req.body;
 
   if (!email)
@@ -9,7 +9,7 @@ export const insertUserController = async (req, res) => {
       message: "Missing required fields: email ",
     });
 
-  console.log("------/api/user/insert------");
+  console.log("------/api/user/update------");
 
   // create a filter based on email
   const filter = { email: email };
@@ -46,14 +46,14 @@ export const getUserController = async (req, res) => {
       message: "Missing required fields: email ",
     });
 
-  console.log("------/api/user/get------");
+  console.log("------/api/user------");
 
   try {
     const collection = mongoDB.db("user").collection(email);
     const result = await collection.findOne({ email: email });
     res.status(200).send(result);
   } catch (err) {
-    console.error(" ERROR @ /api/user/get ::", err.stack);
+    console.error(" ERROR @ /api/user ::", err.stack);
     res.sendStatus(404);
   }
 };
