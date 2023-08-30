@@ -42,9 +42,10 @@ export const recomputeController = async (req, res) => {
         speed: "$metadata.GPSelement.Speed",
         angle: "$metadata.GPSelement.Angle",
         fuel: "$metadata.IOelement.Elements.390",
-        obdOdometer: "$metadata.IOelement.Elements.389",
-        odometer: "$metadata.IOelement.Elements.16",
-        greenDrivingType: "$metadata.IOelement.Elements.253",
+        obdOdo: "$metadata.IOelement.Elements.389",
+        odo: "$metadata.IOelement.Elements.16",
+        violation: "$metadata.IOelement.Elements.253",
+        runtime: "$metadata.IOelement.Elements.42",
       },
     },
     // {
@@ -116,10 +117,12 @@ export const recomputeController = async (req, res) => {
 
       // Append speed used for find max speed
       const speed = trip.map((raw) => raw.speed);
+      const fuel = trip.map((raw) => raw.fuel).filter((f) => f);
+      const runtime = trip.map((raw) => raw.runtime).filter((f) => f);
 
       // Find violations count
       let violationsCount = 0;
-      trip.map((raw) => raw.greenDrivingType && violationsCount++);
+      trip.map((raw) => raw.violation && violationsCount++);
 
       console.log("=======violationsCount:", violationsCount);
 
@@ -130,8 +133,10 @@ export const recomputeController = async (req, res) => {
           lat: Number(raw.lat),
           lon: Number(raw.lon),
           ts: raw.timestamp,
-          odo: Number(raw.odometer) / 1000,
+          odo: Number(raw.odo) / 1000,
           angle: Number(raw.angle),
+          fuel: Number(raw.fuel || 0),
+          runtime: Number(raw.runtime || 0),
           // greenDrivingType: Number(raw.greenDrivingType) || null,
         };
       });
@@ -145,8 +150,10 @@ export const recomputeController = async (req, res) => {
           trip[0].timestamp,
           "minutes"
         ),
-        distance: (trip[trip.length - 1].odometer - trip[0].odometer) / 1000,
+        distance: (trip[trip.length - 1].odo - trip[0].odo) / 1000,
         topSpeed: Number(Math.max(...speed)),
+        fuelUsed: fuel[0] - fuel[fuel.length - 1],
+        runtimeTotal: runtime[runtime.length - 1] - runtime[0],
         coordinates,
       };
       return summary;
