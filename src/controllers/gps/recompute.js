@@ -152,6 +152,7 @@ export const recomputeController = async (req, res) => {
         ),
         distance: (trip[trip.length - 1].odo - trip[0].odo) / 1000,
         topSpeed: Number(Math.max(...speed)),
+        avgSpeed: (speed.reduce((a, b) => a + b, 0) / speed.length).toFixed(2),
         fuelUsed: fuel[0] - fuel[fuel.length - 1],
         runtimeTotal: runtime[runtime.length - 1] - runtime[0],
         coordinates,
