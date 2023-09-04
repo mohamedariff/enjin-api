@@ -1,4 +1,7 @@
 import dayjs from "dayjs";
+import utc from "dayjs/plugin/utc.js";
+
+dayjs.extend(utc);
 
 import { mongoDB } from "../../db/mongodb.js";
 import chunkArray from "../../utils/chunkArray.js";
@@ -19,8 +22,8 @@ export const recomputeController = async (req, res) => {
     {
       $match: {
         timestamp: {
-          $gte: dayjs(date).startOf("day").toDate(),
-          $lte: dayjs(date).endOf("day").toDate(),
+          $gte: dayjs(date).utc().utcOffset(480).startOf("day").toDate(),
+          $lte: dayjs(date).utc().utcOffset(480).endOf("day").toDate(),
         },
       },
     },
@@ -129,15 +132,15 @@ export const recomputeController = async (req, res) => {
       // Iterate trips to append for graph/d3 info
       const coordinates = trip.map((raw) => {
         return {
-          speed: Number(raw.speed),
-          lat: Number(raw.lat),
-          lon: Number(raw.lon),
+          speed: raw.speed,
+          lat: raw.lat,
+          lon: raw.lon,
           ts: raw.timestamp,
-          odo: Number(raw.odo) / 1000,
-          angle: Number(raw.angle),
-          fuel: Number(raw.fuel || 0),
-          runtime: Number(raw.runtime || 0),
-          // greenDrivingType: Number(raw.greenDrivingType) || null,
+          odo: raw.odo / 1000,
+          angle: raw.angle,
+          fuel: raw.fuel || 0,
+          runtime: raw.runtime || 0,
+          // greenDrivingType: (raw.greenDrivingType) || null,
         };
       });
 
@@ -151,7 +154,7 @@ export const recomputeController = async (req, res) => {
           "minutes"
         ),
         distance: (trip[trip.length - 1].odo - trip[0].odo) / 1000,
-        topSpeed: Number(Math.max(...speed)),
+        topSpeed: Math.max(...speed),
         avgSpeed: (speed.reduce((a, b) => a + b, 0) / speed.length).toFixed(2),
         fuelUsed: fuel[0] - fuel[fuel.length - 1],
         runtimeTotal: runtime[runtime.length - 1] - runtime[0],
