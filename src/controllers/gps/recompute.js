@@ -37,7 +37,7 @@ export const recomputeController = async (req, res) => {
     },
     {
       $project: {
-        _id: 1,
+        _id: 0,
         timestamp: 1,
         ignition: 1,
         lat: "$metadata.GPSelement.Latitude",
@@ -78,7 +78,7 @@ export const recomputeController = async (req, res) => {
           dayCollections[index].timestamp,
         ];
       }
-      if (toggle && raw.ignition == 0) {
+      if (toggle && raw.ignition == 0 && !raw.runtime) {
         toggle = false;
         dailyTripsTimestamps = [
           ...dailyTripsTimestamps,
