@@ -5,7 +5,6 @@ dayjs.extend(utc);
 
 import { mongoDB } from "../../db/mongodb.js";
 import chunkArray from "../../utils/chunkArray.js";
-// import { DATE_FORMAT_REVERSE } from "../../utils/constant.js";
 
 export const recomputeController = async (req, res) => {
   const { date, imei } = req.body;
@@ -27,9 +26,6 @@ export const recomputeController = async (req, res) => {
         },
       },
     },
-    // {
-    //   $limit: 1000,
-    // },
     {
       $sort: {
         timestamp: 1,
@@ -51,9 +47,6 @@ export const recomputeController = async (req, res) => {
         runtime: "$metadata.IOelement.Elements.42",
       },
     },
-    // {
-    //   $out: dayjs(date).format(DATE_FORMAT_REVERSE),
-    // },
   ];
 
   try {
