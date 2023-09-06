@@ -57,6 +57,7 @@ export const recomputeController = async (req, res) => {
 
     let dailyTripsTimestamps = [];
     let remove1stTrip = false;
+    let isObdDevice = false;
     let toggle = false;
 
     // find on off igninition state
@@ -65,14 +66,16 @@ export const recomputeController = async (req, res) => {
         if (index <= 1 && dayCollections[0].ignition) {
           return (remove1stTrip = true);
         }
+        if (raw.runtime) isObdDevice = true;
         toggle = true;
         dailyTripsTimestamps = [
           ...dailyTripsTimestamps,
           dayCollections[index].timestamp,
         ];
       }
-      if (toggle && raw.ignition == 0 && !raw.runtime) {
+      if (toggle && raw.ignition == 0 && (isObdDevice ? !raw.runtime : true)) {
         toggle = false;
+        isObdDevice = false;
         dailyTripsTimestamps = [
           ...dailyTripsTimestamps,
           dayCollections[index - 1].timestamp,
