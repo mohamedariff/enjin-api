@@ -133,10 +133,9 @@ export const recomputeController = async (req, res) => {
           lon: raw.lon,
           ts: raw.timestamp,
           odo: raw.odo / 1000,
-          angle: raw.angle,
+          ang: raw.angle,
           fuel: raw.fuel || 0,
-          runtime: raw.runtime || 0,
-          // greenDrivingType: (raw.greenDrivingType) || null,
+          dur: raw.runtime || 0,
         };
       });
 
