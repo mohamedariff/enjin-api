@@ -119,12 +119,6 @@ export const recomputeController = async (req, res) => {
       const fuel = trip.map((raw) => raw.fuel).filter((f) => f);
       const runtime = trip.map((raw) => raw.runtime).filter((f) => f);
 
-      // Find violations count
-      let violationsCount = 0;
-      trip.map((raw) => raw.violation && violationsCount++);
-
-      console.log("=======violationsCount:", violationsCount);
-
       // Iterate trips to append for graph/d3 info
       const coordinates = trip.map((raw) => {
         return {
@@ -134,8 +128,9 @@ export const recomputeController = async (req, res) => {
           ts: raw.timestamp,
           odo: raw.odo / 1000,
           ang: raw.angle,
-          fuel: raw.fuel || 0,
-          dur: raw.runtime || 0,
+          fuel: raw.fuel,
+          dur: raw.runtime,
+          v: raw.violation,
         };
       });
 
