@@ -20,7 +20,7 @@ export async function initSemutDB() {
 
     console.log("Pinged & successfully connected to SemutDB!");
   } catch (e) {
-    console.log("MongoDB Init Failed", e);
+    console.log("SemutDB Init Failed", e);
   } finally {
     // Ensures that the client will close when you finish/error
     // await mongoDB.close();

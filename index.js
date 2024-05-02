@@ -5,7 +5,7 @@ import express from "express";
 import helmet from "helmet";
 import cors from "cors";
 
-import { initMongoDB } from "./src/db/mongodb.js";
+// import { initMongoDB } from "./src/db/mongodb.js";
 import { initSemutDB } from "./src/db/semutdb.js";
 // import redis from "./src/db/redis.js";
 
