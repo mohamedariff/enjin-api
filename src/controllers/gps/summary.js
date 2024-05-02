@@ -1,6 +1,6 @@
 import dayjs from "dayjs";
 
-import { mongoDB } from "../../db/mongodb.js";
+import { semutDB } from "../../db/semutdb.js";
 import { DATE_FORMAT_REVERSE } from "../../utils/constant.js";
 
 export const summaryController = async (req, res) => {
@@ -19,7 +19,7 @@ export const summaryController = async (req, res) => {
   const theDate = dayjs(date).format(DATE_FORMAT_REVERSE);
 
   try {
-    const collection = mongoDB.db("trips").collection(imei);
+    const collection = semutDB.db("trips").collection(imei);
     const result = await collection.findOne({ date: theDate });
     res.status(200).send(result);
   } catch (err) {

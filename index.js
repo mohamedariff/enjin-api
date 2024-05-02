@@ -6,6 +6,7 @@ import helmet from "helmet";
 import cors from "cors";
 
 import { initMongoDB } from "./src/db/mongodb.js";
+import { initSemutDB } from "./src/db/semutdb.js";
 // import redis from "./src/db/redis.js";
 
 import solatRoutes from "./src/routes/solat.js";
@@ -27,6 +28,7 @@ app.use(express.urlencoded({ extended: true }));
 app.listen(process.env.PORT, async () => {
   console.log(`App listening to port ${process.env.PORT} `);
   await initMongoDB();
+  await initSemutDB()
   // await redis.connect();
 });
 

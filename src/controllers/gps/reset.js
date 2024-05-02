@@ -1,4 +1,4 @@
-import { mongoDB } from "../../db/mongodb.js";
+import { semutDB } from "../../db/semutdb";
 
 export const resetController = async (req, res) => {
   const { date, imei } = req.body;
@@ -12,7 +12,7 @@ export const resetController = async (req, res) => {
   console.log("------/api/reset------");
 
   try {
-    const collection = mongoDB.db("trips").collection(imei);
+    const collection = semutDB.db("trips").collection(imei);
     const cursor = collection.drop();
     const result = await cursor.toArray();
 

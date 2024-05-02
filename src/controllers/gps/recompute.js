@@ -3,7 +3,7 @@ import utc from "dayjs/plugin/utc.js";
 
 dayjs.extend(utc);
 
-import { mongoDB } from "../../db/mongodb.js";
+import { semutDB } from "../../db/semutdb.js";
 import chunkArray from "../../utils/chunkArray.js";
 
 export const recomputeController = async (req, res) => {
@@ -12,7 +12,7 @@ export const recomputeController = async (req, res) => {
   if (!date || !imei)
     return res.status(400).json({
       status: "Error",
-      message: `Missing required fields: ${!date ? "date" : "imei"} `,
+      message: `Missing ${!date ? "date" : "imei"} fields`,
     });
 
   console.log("------/api/recompute------");
@@ -50,7 +50,7 @@ export const recomputeController = async (req, res) => {
   ];
 
   try {
-    const collection = mongoDB.db("imei").collection(imei);
+    const collection = semutDB.db("imei").collection(imei);
     const dayCollections = await collection.aggregate(agg).toArray();
 
     if (!dayCollections.length) return res.status(200).send([]);

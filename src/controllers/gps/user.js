@@ -1,4 +1,4 @@
-import { mongoDB } from "../../db/mongodb.js";
+import { semutDB } from "../../db/semutdb";
 
 export const updateUserController = async (req, res) => {
   const { email, data } = req.body;
@@ -19,7 +19,7 @@ export const updateUserController = async (req, res) => {
   const updateDoc = { $set: { ...data } };
 
   try {
-    const collection = mongoDB.db("user").collection(email);
+    const collection = semutDB.db("user").collection(email);
     const result = await collection.findOneAndUpdate(
       filter,
       updateDoc,
