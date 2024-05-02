@@ -27,7 +27,7 @@ app.use(express.urlencoded({ extended: true }));
 
 app.listen(process.env.PORT, async () => {
   console.log(`App listening to port ${process.env.PORT} `);
-  await initMongoDB();
+  // await initMongoDB();
   await initSemutDB()
   // await redis.connect();
 });
