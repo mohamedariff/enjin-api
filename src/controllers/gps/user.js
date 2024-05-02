@@ -1,4 +1,4 @@
-import { semutDB } from "../../db/semutdb";
+import { semutDB } from "../../db/semutdb.js";
 
 export const updateUserController = async (req, res) => {
   const { email, data } = req.body;

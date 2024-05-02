@@ -1,4 +1,4 @@
-import { semutDB } from "../../db/semutdb";
+import { semutDB } from "../../db/semutdb.js";
 
 export const resetController = async (req, res) => {
   const { date, imei } = req.body;
