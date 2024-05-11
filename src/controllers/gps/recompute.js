@@ -50,7 +50,7 @@ export const recomputeController = async (req, res) => {
   ];
 
   try {
-    const collection = semutDB.db("imei").collection(imei);
+    const collection = semutDB.db("imei").collection(imei.toString());
     const dayCollections = await collection.aggregate(agg).toArray();
 
     if (!dayCollections.length) return res.status(200).send([]);

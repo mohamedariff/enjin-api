@@ -12,7 +12,7 @@ export const latestController = async (req, res) => {
   console.log("------/api/latest------");
 
   try {
-    const collection = semutDB.db("imei").collection(imei);
+    const collection = semutDB.db("imei").collection(imei.toString());
     const cursor = collection.find().limit(1).sort({ timestamp: -1 });
     const result = await cursor.toArray();
 
