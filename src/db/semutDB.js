@@ -1,6 +1,7 @@
 import { MongoClient, ServerApiVersion } from "mongodb";
 
-const MONGO_CONFIG = process.env.SEMUTDB;
+const isDev = process.env.NODE_ENV === "development";
+const MONGO_CONFIG = isDev ? process.env.SEMUTDB : process.env.LOCAL_SEMUTDB;
 
 // Create a MongoClient with a MongoClientOptions object to set the Stable API version
 export const semutDB = new MongoClient(MONGO_CONFIG, {
