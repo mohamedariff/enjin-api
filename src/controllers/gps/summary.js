@@ -15,7 +15,6 @@ export const summaryController = async (req, res) => {
   console.log("------/api/summary------");
 
   // const slug = `/api/summary/${imei}/${date}`;
-
   const theDate = dayjs(date).format(DATE_FORMAT_REVERSE);
 
   try {

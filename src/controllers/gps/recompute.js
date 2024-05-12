@@ -158,7 +158,7 @@ export const recomputeController = async (req, res) => {
     const summarized_trips = { date: date, trips };
     res.status(200).send(summarized_trips);
 
-    const trips_collection = mongoDB.db("trips").collection(imei.toString());
+    const trips_collection = semutDB.db("trips").collection(imei.toString());
     await trips_collection.deleteMany({ date });
     await trips_collection.insertOne(summarized_trips);
 
