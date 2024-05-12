@@ -156,12 +156,12 @@ export const recomputeController = async (req, res) => {
     console.timeEnd("compute trips");
 
     const summarized_trips = { date: date, trips };
+    res.status(200).send(summarized_trips);
 
     const trips_collection = mongoDB.db("trips").collection(imei.toString());
     await trips_collection.deleteMany({ date });
     await trips_collection.insertOne(summarized_trips);
 
-    res.status(200).send(summarized_trips);
   } catch (err) {
     console.error(" ERROR @ /api/recompute ::", err.stack);
     return res.sendStatus(404);
