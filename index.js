@@ -5,9 +5,8 @@ import express from "express";
 import helmet from "helmet";
 import cors from "cors";
 
-// import { initMongoDB } from "./src/db/mongodb.js";
+import redis from "./src/db/redis.js";
 import { initSemutDB } from "./src/db/semutdb.js";
-// import redis from "./src/db/redis.js";
 
 import solatRoutes from "./src/routes/solat.js";
 import userRoutes from "./src/routes/gps/user.js";
@@ -29,7 +28,7 @@ app.listen(process.env.PORT, async () => {
   console.log(`App listening to port ${process.env.PORT} `);
   // await initMongoDB();
   await initSemutDB()
-  // await redis.connect();
+  await redis.connect();
 });
 
 app.get("/", (_, res) => res.send("Hekhek Sdn Bhd"));

@@ -1,5 +1,6 @@
 import dayjs from "dayjs";
 
+import redis from "../../db/redis.js";
 import { semutDB } from "../../db/semutdb.js";
 import { DATE_FORMAT_REVERSE } from "../../utils/constant.js";
 
@@ -14,13 +15,15 @@ export const summaryController = async (req, res) => {
 
   console.log("------/api/summary------");
 
-  // const slug = `/api/summary/${imei}/${date}`;
+  const slug = `/api/summary/${imei}/${date}`;
   const theDate = dayjs(date).format(DATE_FORMAT_REVERSE);
 
   try {
     const collection = semutDB.db("trips").collection(imei.toString());
     const result = await collection.findOne({ date: theDate });
+
     res.status(200).send(result);
+    redis.setEx(slug, 86400, JSON.stringify(result))
   } catch (err) {
     console.error(" ERROR @ /api/summary ::", err.stack);
     return res.sendStatus(404);
