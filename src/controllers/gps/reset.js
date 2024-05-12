@@ -12,7 +12,7 @@ export const resetController = async (req, res) => {
   console.log("------/api/reset------");
 
   try {
-    const collection = semutDB.db("trips").collection(imei);
+    const collection = semutDB.db("trips").collection(imei.toString());
     const cursor = collection.drop();
     const result = await cursor.toArray();
 

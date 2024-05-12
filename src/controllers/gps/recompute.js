@@ -157,7 +157,7 @@ export const recomputeController = async (req, res) => {
 
     const summarized_trips = { date: date, trips };
 
-    const trips_collection = mongoDB.db("trips").collection(imei);
+    const trips_collection = mongoDB.db("trips").collection(imei.toString());
     await trips_collection.deleteMany({ date });
     await trips_collection.insertOne(summarized_trips);
 

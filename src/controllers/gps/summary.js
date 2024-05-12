@@ -19,7 +19,7 @@ export const summaryController = async (req, res) => {
   const theDate = dayjs(date).format(DATE_FORMAT_REVERSE);
 
   try {
-    const collection = semutDB.db("trips").collection(imei);
+    const collection = semutDB.db("trips").collection(imei.toString());
     const result = await collection.findOne({ date: theDate });
     res.status(200).send(result);
   } catch (err) {
