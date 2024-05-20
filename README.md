@@ -9,7 +9,7 @@ Key is saved at: /etc/letsencrypt/live/api.hekhek.xyz/privkey.pem
 
 ## TODO
 
-- [ ] scrape fuel price
+- [ ] scrape fuel price - https://www.kpdn.gov.my/ms/
 - [ ] reporting
   - [ ] fuel consumption - tele with Setel summary?
   - [ ] weekly/monthly trips summary
@@ -21,4 +21,4 @@ Key is saved at: /etc/letsencrypt/live/api.hekhek.xyz/privkey.pem
   - [ ] via telegram ?
   - [ ] via push notification ?
 - [ ] add/use queue ? overkill ?
-- [ ] every trip, query by id?
+- [x] every trip, query by id?
