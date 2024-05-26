@@ -126,15 +126,10 @@ export const recomputeController = async (req, res) => {
       let refuelData = []
 
       if (isRefuel) {
-        refuelData = trip.reduce((acc, raw, index) => {
-          if (raw.fuel > trip[index - 1]?.fuel) {
-            acc.push({
-              ...raw,
-              refilled: raw.fuel - trip[index - 1].fuel
-            })
-          }
-          return acc
-        }, [])
+        refuelData = trip.map((raw, index) => {
+          const isRefill = (raw?.fuel || 0) > (trip[index - 1]?.fuel || 0)
+          if (isRefill) return raw
+        }).filter(Boolean)
       }
 
       // Iterate trips to append for graph/d3 info

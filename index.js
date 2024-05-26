@@ -27,8 +27,8 @@ app.use(express.urlencoded({ extended: true }))
 
 app.listen(process.env.PORT, async () => {
   console.log(`App listening to port ${process.env.PORT} `)
-  await initSemutDB()
-  await redis.connect()
+  initSemutDB()
+  redis.connect()
 })
 
 app.get('/', (_, res) => res.send('Hekhek Sdn Bhd'))
