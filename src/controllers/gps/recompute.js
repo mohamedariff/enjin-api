@@ -173,26 +173,10 @@ export const recomputeController = async (req, res) => {
     const summarized_trips = { date, trips }
     res.status(200).send(summarized_trips)
 
-    /* Old trips summary */
-    /* one day has many trips data */
     const trips_collection = semutDB.db('trips').collection(imei.toString())
     await trips_collection.deleteMany({ date })
     await trips_collection.insertOne(summarized_trips)
 
-    /* New trips summary */
-    /* one day has many trips _id */
-    const trips_summary_data = {
-      date,
-      tripsSummary: trips.map((trip) => trip._id)
-    }
-    const trips_summary_collection = semutDB
-      .db('trips_summary')
-      .collection(imei.toString())
-    await trips_summary_collection.insertOne(trips_summary_data)
-
-    /* store trips as individual */
-    const tripz_collection = semutDB.db('tripsz').collection(imei.toString())
-    await tripz_collection.insertMany(trips)
   } catch (err) {
     console.error(' ERROR @ /api/recompute ::', err.stack)
     return res.sendStatus(404)
