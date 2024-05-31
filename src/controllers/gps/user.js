@@ -49,8 +49,8 @@ export const getUserController = async (req, res) => {
   console.log("------/api/user------");
 
   try {
-    const collection = mongoDB.db("user").collection(email);
-    const result = await collection.findOne({ email: email });
+    const collection = semutDB.db("users").collection(email);
+    const result = await collection.findOne({ email });
     res.status(200).send(result);
   } catch (err) {
     console.error(" ERROR @ /api/user ::", err.stack);
