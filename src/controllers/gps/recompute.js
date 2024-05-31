@@ -4,6 +4,7 @@ import utc from 'dayjs/plugin/utc.js'
 
 dayjs.extend(utc)
 
+import redis from '../../db/redis.js'
 import { semutDB } from '../../db/semutdb.js'
 import chunkArray from '../../utils/chunkArray.js'
 
@@ -15,6 +16,9 @@ export const recomputeController = async (req, res) => {
       status: 'Error',
       message: `Missing ${!date ? 'date' : 'imei'} fields`
     })
+
+  const slug = `/api/summary/${imei}/${date}`;
+  await redis.del(slug)
 
   console.log('------/api/recompute------')
 
