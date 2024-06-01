@@ -131,7 +131,7 @@ export const recomputeController = async (req, res) => {
 
       if (isRefuel) {
         refuelData = trip.map((raw, index) => {
-          const isRefill = (raw?.fuel || 0) > (trip[index - 1]?.fuel || 0)
+          const isRefill = trip[index - 1] && (raw.fuel || 0) > (trip[index - 1].fuel || 0)
           if (isRefill) return raw
         }).filter(Boolean)
       }
