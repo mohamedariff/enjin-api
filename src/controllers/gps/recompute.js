@@ -55,6 +55,9 @@ export const recomputeController = async (req, res) => {
   ]
 
   try {
+    const tripsCollections = semutDB.db('trips').collection(imei.toString())
+    await tripsCollections.deleteMany()
+
     const collection = semutDB.db('imei').collection(imei.toString())
     const dayCollections = await collection.aggregate(agg).toArray()
 
