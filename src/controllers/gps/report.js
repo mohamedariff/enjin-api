@@ -3,7 +3,7 @@ import dayjs from "dayjs";
 import redis from '../../db/redis.js'
 import { semutDB } from "../../db/semutdb.js";
 
-import { detectRefuelEvents } from '../../utils/report.js'
+import { calculateTripSummary, detectRefuelEvents } from '../../utils/report.js'
 
 export const fuelReportController = async (req, res) => {
   const { range, date, imei } = req.body;
@@ -66,26 +66,39 @@ export const fuelReportController = async (req, res) => {
 };
 
 export const tripReportController = async (req, res) => {
-  const { date, imei } = req.body;
+  const { date, imei, range } = req.body;
 
-  // if (!date || !imei)
-  //   return res.status(400).json({
-  //     status: "Error",
-  //     message: `Missing required fields: ${!date ? "date" : "imei"} `,
-  //   });
+  if (!date || !imei)
+    return res.status(400).json({
+      status: "Error",
+      message: `Missing required fields: ${!range ? "range" : !imei ? "imei" : "date"} `,
+    });
 
-  // console.log("------/api/report/trip------");
+  console.log("------/api/report/trip------");
 
-  // const slug = `/api/report/trip/${imei}/${date}`;
-  // const theDate = dayjs(date).format(DATE_FORMAT_REVERSE);
+  const slug = `/api/report/trip/${imei}/${date}/${range}`;
 
-  // try {
-  //   const collection = semutDB.db("trips").collection(imei.toString());
-  //   const result = await collection.findOne({ date: theDate });
+  const agg = [
+    {
+      $match: {
+        date: {
+          $gte: dayjs(date).utc().utcOffset(480).startOf(range).format('YYYY-MM-DD'),
+          $lte: dayjs(date).utc().utcOffset(480).endOf(range).format('YYYY-MM-DD')
+        }
+      }
+    }
+  ]
 
-  //   res.status(200).send(result);
-  // } catch (err) {
-  //   console.error(" ERROR @ /api/report/trip ::", err.stack);
-  //   return res.sendStatus(404);
-  // }
+  try {
+    const collection = semutDB.db("trips").collection(imei.toString());
+    const result = await collection.aggregate(agg).toArray()
+
+    const computeTripsReport = calculateTripSummary(result)
+
+    res.status(200).send(computeTripsReport);
+    redis.setEx(slug, 86400, JSON.stringify(computeTripsReport))
+  } catch (err) {
+    console.error(" ERROR @ /api/report/trip ::", err.stack);
+    return res.sendStatus(404);
+  }
 };
