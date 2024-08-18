@@ -12,9 +12,9 @@ Key is saved at: `/etc/letsencrypt/live/api.hekhek.xyz/privkey.pem`
 ### Backend
 
 - [ ] scrape fuel price - [https://www.kpdn.gov.my/ms/](https://www.kpdn.gov.my/ms/)
-- [ ] reporting
-  - [ ] fuel consumption report - tele with Setel summary?
-  - [ ] mileage report -
+- [x] reporting
+  - [x] fuel consumption report - tele with Setel summary?
+  - [x] mileage report -
     - [ ] km per day, violations per day, etc
     - [ ] mileage vs distance
     - [ ] total time and mileage
@@ -23,7 +23,6 @@ Key is saved at: `/etc/letsencrypt/live/api.hekhek.xyz/privkey.pem`
 - [ ] use GeoJSON format
 - [ ] geofencing ?
 - [ ] notification [battery | fuel | geofence] ?
-  - [ ] via twillio ?
   - [ ] via whatsapp ?
   - [x] via telegram ?
   - [ ] via push notification ?
