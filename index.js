@@ -7,7 +7,7 @@ import compression from 'compression'
 
 import redis from './src/db/redis.js'
 import { initSemutDB } from './src/db/semutdb.js'
-import { initSwiftDB } from './src/db/swiftDb.js'
+import { initSwiftDB } from './src/db/swiftdb.js'
 
 import solatRoutes from './src/routes/solat.js'
 
