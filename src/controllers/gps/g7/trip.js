@@ -1,7 +1,7 @@
 import dayjs from "dayjs";
 
 import redis from '../../../db/redis.js';
-import { swiftDB } from "../../../db/swiftDb.js";
+import { swiftDB } from "../../../db/swiftdb.js";
 
 export const tripController = async (req, res) => {
   const { pmId, date } = req.body;

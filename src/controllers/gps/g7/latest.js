@@ -1,4 +1,4 @@
-import { swiftDB } from "../../../db/swiftDb.js";
+import { swiftDB } from "../../../db/swiftdb.js";
 
 export const latestController = async (req, res) => {
   const { pmIds } = req.body;
